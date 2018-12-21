@@ -5,84 +5,86 @@
 		this.W= this.canvas.width;
 		this.H= this.canvas.height;
 		this.Bw= this.W/10;
-		this.Bh= this.H/20;
+		this.Bh= 40;
 
 
 		var self= this;
 
-		this.shape_name= ["I","O","T","L","J","S","Z",];
+		this.shape_name= ["I","O","T","L","J","S","Z"];
 		this.shape_draw={
-			I: function (x, y, t){
+			I: function (x, y){
 				var c= "#364fc7";
-				self.block(x*self.Bw, y*self.Bh, c);
-				self.block(t? x: x*self.Bw+self.Bw, t? y*self.Bh+self.Bh: y*self.Bh, c);
-				self.block(t? x: x*self.Bw+self.Bw*2, t? y*self.Bh+self.Bh*2: y*self.Bh, c);
-				self.block(t? x: x*self.Bw+self.Bw*3, t? y*self.Bh+self.Bh*3: y*self.Bh, c);
+				self.block(x*self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw*2, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw*3, y*self.Bh+20, c);
 			},
 			O: function (x, y){
 				var c= "#fcc419";
-				self.block(x*self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw, y*self.Bh+self.Bw, c);
-				self.block(x*self.Bw+self.Bw, y*self.Bh+self.Bw, c);
+				self.block(x*self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw, y*self.Bh+20-self.Bw, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20-self.Bw, c);
 			},
 			T: function (x, y){
 				var c= "#845ef7";
-				self.block(x*self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw*2, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw, y*self.Bh+self.Bh, c);
+				self.block(x*self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw*2, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20-self.Bh, c);
 			},
 			L: function (x, y){
 				var c= "#e8590c";
-				self.block(x*self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw*2, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw*2, y*self.Bh-self.Bh, c);
+				self.block(x*self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw, y*self.Bh+20-self.Bh, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw*2, y*self.Bh+20, c);
 			},
 			J: function (x, y){
 				var c= "#74c0fc";
-				self.block(x*self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw, y*self.Bh+self.Bh, c);
-				self.block(x*self.Bw+self.Bw, y*self.Bh+self.Bh, c);
-				self.block(x*self.Bw+self.Bw*2, y*self.Bh+self.Bh, c);
+				self.block(x*self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw*2, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw*2, y*self.Bh+20-self.Bh, c);
 			},
 			S: function (x, y){
 				var c= "#8ce99a";
-				self.block(x*self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw, y*self.Bh-self.Bh, c);
-				self.block(x*self.Bw+self.Bw*2, y*self.Bh-self.Bh, c);
+				self.block(x*self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20-self.Bh, c);
+				self.block(x*self.Bw+self.Bw*2, y*self.Bh+20-self.Bh, c);
 			},
 			Z: function (x, y){
 				var c= "#f03e3e";
-				self.block(x*self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw, y*self.Bh, c);
-				self.block(x*self.Bw+self.Bw, y*self.Bh+self.Bh, c);
-				self.block(x*self.Bw+self.Bw*2, y*self.Bh+self.Bh, c);
+				self.block(x*self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20, c);
+				self.block(x*self.Bw+self.Bw, y*self.Bh+20+self.Bh, c);
+				self.block(x*self.Bw+self.Bw*2, y*self.Bh+20+self.Bh, c);
 			},
 		};
 	}
 	Tetris.prototype.sort = function() {
-		var R= Math.floor(Math.random()*7);
-		var n= 0;
-		for(var i=0; i<this.ShapeList.length; i++){
-			if(this.ShapeList[i] != R)
-				n++;
+		this.ShapeList= [];
+		var self= this;
+		function recursion (){
+			var R= Math.floor(Math.random()*7);
+			var n= 0;
+			for(var i=0; i<self.ShapeList.length; i++){
+				if(self.ShapeList[i] != R)
+					n++;
+			}
+			if(n==self.ShapeList.length)
+				self.ShapeList.push(R);
+			if(self.ShapeList.length==7)
+				return false;
+			return recursion();
 		}
-		if(n==this.ShapeList.length)
-			this.ShapeList.push(R);
-		if(this.ShapeList.length==7)
-			return;
-		this.sort();
-	};
-	Tetris.prototype.test = function() {
-		for(var i=0; i<this.ShapeList.length; i++){
-			var n= this.ShapeList[i];
-			this.shape_draw[this.shape_name[n]](i, (i+1)*2);
-		}
+		recursion();
+		console.log(self.ShapeList);
 	};
 	Tetris.prototype.init = function (){
+		var self= this;
+
 		this.arr= [
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -108,12 +110,109 @@
 		this.score= 0;
 
 		this.ShapeList=[];
-
 		this.sort();
-		console.log(this.ShapeList);
-		this.display();
-		this.test();
 
+		this.cnt= 0;
+
+		this.Nx= getX();
+		this.Ny= getY();
+		// this.Nx= 3;
+		// this.Ny= this.ShapeList[this.cnt] == 0? -1: 0;
+
+		function getX(){
+			var arr= [];
+			switch(self.shape_name[self.ShapeList[self.cnt]]){
+				case "I":
+					arr= [3, 4, 5, 6];
+					break;
+				case "O":
+					arr= [3, 4];
+					break;
+				case "T":
+					arr= [3, 4, 5];
+					break;
+				case "L":
+					arr= [3, 4, 5];
+					break;
+				case "J":
+					arr= [3, 4, 5];
+					break;
+				case "S":
+					arr= [3, 4, 5];
+					break;
+				case "Z":
+					arr= [3, 4, 5];
+					break;
+			}
+			return arr;
+		}
+		function getY(){
+			var arr= [];
+			switch(self.shape_name[self.ShapeList[self.cnt]]){
+				case "I":
+					arr= [-1, -1, -1, -1];
+					break;
+				case "O":
+					arr= [0, 0];
+					break;
+				case "T":
+					arr= [0, 0, 0];
+					break;
+				case "L":
+					arr= [0, 0, 0];
+					break;
+				case "J":
+					arr= [0, 0, 0];
+					break;
+				case "S":
+					arr= [0, 0, -1];
+					break;
+				case "Z":
+					arr= [-1, 0, 0];
+					break;
+			}
+			return arr;
+		}
+
+		self.display();
+		self.shape_draw[self.shape_name[self.ShapeList[self.cnt]]](self.Nx[0], self.Ny[0]);
+
+		function next(){
+			var a=0;
+			for(var i=0; i<self.Ny.length; i++){
+				console.log(self.Ny[i]+1, self.Nx[i]);
+				if(self.arr[self.Ny[i]+1] != undefined && self.arr[self.Ny[i]+1][self.Nx[i]] != undefined && self.arr[self.Ny[i]+1][self.Nx[i]] == 0 )
+					a++;
+			}
+			return a!=self.Ny.length;
+		}
+		function callback (){
+			self.cnt++;
+			if(self.cnt == self.ShapeList.length-2){
+				self.sort();
+				self.cnt=0;
+			}
+			self.Ny= getY();
+			setTimeout(function (){
+				self.display();
+				self.shape_draw[self.shape_name[self.ShapeList[self.cnt]]](self.Nx[0], self.Ny[0]);
+				down= setInterval(_itv, 500); 
+			}, 500);
+		}
+		function _itv (){
+			for(var i=0; i<self.Ny.length; i++){
+				self.Ny[i]++;
+			}
+			self.display();
+			self.shape_draw[self.shape_name[self.ShapeList[self.cnt]]](self.Nx[0], self.Ny[0]);
+			if(next()){
+				clearInterval(down);
+				callback();
+			}
+		}
+		var down= setInterval(_itv, 500);
+	};
+	Tetris.prototype.eve = function() {
 		var self= this;
 		window.addEventListener("keydown", function (e){
 			switch(e.keyCode){
@@ -132,12 +231,26 @@
 			}
 		});
 	};
-	Tetris.prototype.update = function (){
-
+	Tetris.prototype.check = function() {
+		for(var i=0; i<this.Nx.length; i++){
+			if(this.arr[this.ny[i]+1] == undefined || this.arr[this.ny[i]+1] != 0) // reach floor
+				return false;
+		}
+		return true;
+	};
+	Tetris.prototype.update = function (n){
+			if(n!=0&&n%60==0){ // 1s down
+				if(this.check()){ // reach floor
+					this.next();
+				}else{ // keep down
+					this.down();
+				}
+				this.display();
+			}
 
 		var self= this;
 		setTimeout(function (){
-			self.update();
+			self.update(++n);
 		}, 1000/60);
 	};
 	Tetris.prototype.display = function (){
@@ -146,9 +259,9 @@
 		this.strokeStyle= "#333";
 		this.lineWidth= 1;
 		this.ctx.beginPath();
-		for(var j=1; j<= 19; j++){
-			this.ctx.moveTo(0, j*this.Bh);
-			this.ctx.lineTo(this.W, j*this.Bh);
+		for(var j=0; j<= 19; j++){
+			this.ctx.moveTo(0, j*this.Bh+20);
+			this.ctx.lineTo(this.W, j*this.Bh+20);
 			this.ctx.stroke();
 		}
 		for(var i=1; i<= 9; i++){
@@ -157,6 +270,7 @@
 			this.ctx.stroke();
 		}
 		this.ctx.closePath();
+
 
 		var self= this;
 		// requestAnimationFrame(function(){self.display();});
@@ -173,7 +287,7 @@
 	window.onload= function (){
 		var tetris= new Tetris();
 		tetris.init();
-		// tetris.update();
+		// tetris.update(0);
 		// tetris.display();
 	}
 	return Tetris;

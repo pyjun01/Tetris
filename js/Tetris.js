@@ -80,45 +80,8 @@
 			return recursion();
 		}
 		recursion();
-		console.log(self.ShapeList);
 	};
 	Tetris.prototype.init = function (){
-		var self= this;
-
-		this.arr= [
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-		];
-		this.score= 0;
-
-		this.ShapeList=[];
-		this.sort();
-
-		this.cnt= 0;
-
-		this.Nx= getX();
-		this.Ny= getY();
-		// this.Nx= 3;
-		// this.Ny= this.ShapeList[this.cnt] == 0? -1: 0;
-
 		function getX(){
 			var arr= [];
 			switch(self.shape_name[self.ShapeList[self.cnt]]){
@@ -173,6 +136,36 @@
 			}
 			return arr;
 		}
+		var self= this;
+
+		this.arr= [
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		];
+		this.score= 0;
+		this.ShapeList=[];
+		this.sort();
+		this.cnt= 0;
+		this.Nx= getX();
+		this.Ny= getY();
 
 		self.display();
 		self.shape_draw[self.shape_name[self.ShapeList[self.cnt]]](self.Nx[0], self.Ny[0]);
@@ -180,18 +173,67 @@
 		function next(){
 			var a=0;
 			for(var i=0; i<self.Ny.length; i++){
-				console.log(self.Ny[i]+1, self.Nx[i]);
 				if(self.arr[self.Ny[i]+1] != undefined && self.arr[self.Ny[i]+1][self.Nx[i]] != undefined && self.arr[self.Ny[i]+1][self.Nx[i]] == 0 )
 					a++;
 			}
 			return a!=self.Ny.length;
 		}
+		function addarr(){
+			switch(self.shape_name[self.ShapeList[self.cnt]]){
+				case "I":
+					for(var i=0; i< self.Ny.length; i++){
+						self.arr[self.Ny[i]][self.Nx[i]]=self.shape_name[self.ShapeList[self.cnt]];
+					}
+					break;
+				case "O":
+					for(var i=0; i< self.Ny.length; i++){
+						self.arr[self.Ny[i]][self.Nx[i]]=self.shape_name[self.ShapeList[self.cnt]];
+					}
+					for(var i=0; i< self.Ny.length; i++){
+						self.arr[self.Ny[i]-1][self.Nx[i]]=self.shape_name[self.ShapeList[self.cnt]];
+					}
+					break;
+				case "T":
+					for(var i=0; i< self.Ny.length; i++){
+						self.arr[self.Ny[i]][self.Nx[i]]=self.shape_name[self.ShapeList[self.cnt]];
+					}
+					self.arr[self.Ny[1]-1][self.Nx[1]]=self.shape_name[self.ShapeList[self.cnt]];
+					break;
+				case "L":
+					for(var i=0; i< self.Ny.length; i++){
+						self.arr[self.Ny[i]][self.Nx[i]]=self.shape_name[self.ShapeList[self.cnt]];
+					}
+					self.arr[self.Ny[0]-1][self.Nx[0]]=self.shape_name[self.ShapeList[self.cnt]];
+					break;
+				case "J":
+					for(var i=0; i< self.Ny.length; i++){
+						self.arr[self.Ny[i]][self.Nx[i]]=self.shape_name[self.ShapeList[self.cnt]];
+					}
+					self.arr[self.Ny[2]-1][self.Nx[2]]=self.shape_name[self.ShapeList[self.cnt]];
+					break;
+				case "S":
+					for(var i=0; i< self.Ny.length; i++){
+						self.arr[self.Ny[i]][self.Nx[i]]=self.shape_name[self.ShapeList[self.cnt]];
+					}
+					self.arr[self.Ny[1]-1][self.Nx[1]]=self.shape_name[self.ShapeList[self.cnt]];
+					break;
+				case "Z":
+					for(var i=0; i< self.Ny.length; i++){
+						self.arr[self.Ny[i]][self.Nx[i]]=self.shape_name[self.ShapeList[self.cnt]];
+					}
+					self.arr[self.Ny[1]-1][self.Nx[1]]=self.shape_name[self.ShapeList[self.cnt]];
+					break;
+			}
+			self.arr
+		}
 		function callback (){
+			addarr();
 			self.cnt++;
-			if(self.cnt == self.ShapeList.length-2){
+			if(self.cnt == self.ShapeList.length){
 				self.sort();
 				self.cnt=0;
 			}
+			self.Nx= getX();
 			self.Ny= getY();
 			setTimeout(function (){
 				self.display();
@@ -270,7 +312,40 @@
 			this.ctx.stroke();
 		}
 		this.ctx.closePath();
-
+		for(var i=0; i< this.arr.length; i++){
+			for(var j=0; j< this.arr[i].length; j++){
+				switch(this.arr[i][j]){
+					case "I":
+						var c= "#364fc7";
+						this.block(j*this.Bw, i*this.Bh+20, c);
+						break;
+					case "O":
+						var c= "#fcc419";
+						this.block(j*this.Bw, i*this.Bh+20, c);
+						break;
+					case "T":
+						var c= "#845ef7";
+						this.block(j*this.Bw, i*this.Bh+20, c);
+						break;
+					case "L":
+						var c= "#e8590c";
+						this.block(j*this.Bw, i*this.Bh+20, c);
+						break;
+					case "J":
+						var c= "#74c0fc";
+						this.block(j*this.Bw, i*this.Bh+20, c);
+						break;
+					case "S":
+						var c= "#8ce99a";
+						this.block(j*this.Bw, i*this.Bh+20, c);
+						break;
+					case "Z":
+						var c= "#f03e3e";
+						this.block(j*this.Bw, i*this.Bh+20, c);
+						break;
+				}
+			}
+		}
 
 		var self= this;
 		// requestAnimationFrame(function(){self.display();});

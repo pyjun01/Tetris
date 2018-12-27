@@ -104,33 +104,37 @@
 		this.ctx.restore();
 	};
 	Tetris.prototype.NextBlock = function() {
-		for(var i=0; i< this.Nx.length; i++){
-		this.arr.push([this.Nx[i], this.Ny[i], this.ShapeList[this.cnt]]);
-		}
+		for(var i=0; i< this.Nx.length; i++)
+			this.arr.push([this.Nx[i], this.Ny[i], this.ShapeList[this.cnt]]);
+		
 		if(this.arr.length > 10){
 			var a=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 			var len= this.arr.length;
 			var isFull= false
-			var FullNum= 20;
+			var FullNum= [];
 			for(var i=0; i<len; i++)
 				a[this.arr[i][1]]++;
 			for(var i=0; i<20; i++){
 				if(a[i] == 10){
 					isFull= true;
-					FullNum= i < FullNum? i: FullNum;
+					FullNum.push(i);
 				}
 			}
 			if(isFull){
+				var Nlen= FullNum.length;
 				this.arr= this.arr.filter(function (v){
-					return a[v[1]] != 10 && v[0] < FullNum;
+					return a[v[1]] != 10;
 				});
-				this.arr.map(function (v){
-					if(v[1] < FullNum)
-						return v[1]++;
-				})
+				for(var i=0; i< len; i++){
+					for(var j=0; j< Nlen; j++){
+						if(this.arr[i][1] < FullNum[j])
+							this.arr[i][1]++;
+					}
+				}
 			}
 		}
 		this.cnt++;
+		this.T= 0;
 		if(this.cnt == this.ShapeList.length){
 			this.sort();
 			this.cnt=0;
@@ -144,6 +148,7 @@
 		this.arr=[];
 		this.score= 0;
 		this.cnt= 0;
+		this.T= 0;
 		this.sort();
 		this.Nx= this.getPos(true);
 		this.Ny= this.getPos(false);	
@@ -157,8 +162,62 @@
 				case 32:
 					break;
 				case 38:
+					var Ix= [];
+					var Iy= [];
+					switch(self.ShapeList[self.cnt]){
+						case "I":
+							switch(self.T){
+								/*
+									x= x[0]+2
+									y= y[0]-2 + x[i]-x[0]
+
+									x= x[0]-2 + y[i]-y[0]
+									y= y[0]+2
+
+									x= x[0]+1
+									y= y[0]-2 + x[i]-x[0]
+
+									x= x[0]-1 + y[i]-y[0]
+									y= y[0]+2
+
+								*/
+								case 0:
+									var Ay= self.Ny[0]+1>19? -3: -2;
+									for(var i=0; i<self.Nx.length; i++){
+										Ix.push(self.Nx[0]+2);
+										Iy.push( (self.Nx[i]-self.Nx[0]) + self.Ny[0]+Ay);
+									}
+									break;
+								case 1:
+									// var Ax= self.Nx[0]-2<0? 
+									for(var i=0; i<self.Nx.length; i++){
+										Ix.push( (self.Ny[i]-self.Ny[0]) + self.Nx[0]-2);
+										Iy.push(self.Ny[0]+2);
+									}
+									break;
+								case 2:
+									// var m= (self.Nx[3]-2<=19? -2: -3;
+									for(var i=0; i<self.Nx.length; i++){
+										Ix.push(self.Nx[0]+1);
+										Iy.push( (self.Nx[i]-self.Nx[0]) + self.Ny[0]-2);
+									}
+									break;
+								case 3:
+									var m= self.Nx[0]-1<0? 0: -1;
+									for(var i=0; i<self.Nx.length; i++){
+										Ix.push( (self.Ny[i]-self.Ny[0]) + self.Nx[0]-1);
+										Iy.push(self.Ny[0]+2);
+									}
+									break;
+							}
+							self.Nx= Ix;
+							self.Ny= Iy;
+							break;
+					}
+					self.T++;
+					if(self.T>3)
+						self.T=0;
 					break;
-				// space, turn
 				case 37:
 					var Min= Math.min.apply(null, self.Nx);
 					if(Min==0)

@@ -7,13 +7,16 @@ function Tetris(){
 	this.Bh= 40;
 
 	var self= this;
+	this.press= false;
+	this.arrow= null;
 	this.handleKeyDown= function (e){
 		switch(e.keyCode){
 			case 32:
 				clearInterval(self.down);
-				function down(){
+				function down(n){
 					if(self.next()){
 						self.NextBlock();
+						self.score+= n*2;
 						return;
 					}else{
 						for(var i=0; i<self.Ny.length; i++)
@@ -22,9 +25,9 @@ function Tetris(){
 					if(self.E){
 						self.end();
 					}
-					down();
+					down(++n);
 				}
-				down();
+				down(0);
 				self.down= setInterval(function(){self.update()}, 1000);
 				break;
 			case 38:
@@ -181,21 +184,77 @@ function Tetris(){
 					self.Nx[i]+= (e.keyCode == 37? -1: 1);
 				break;
 			case 40:
-				clearInterval(self.down);
-				if(self.next()){
-					self.NextBlock()
-				}else{
-					for(var i=0; i<self.Ny.length; i++)
-						self.Ny[i]++;
+				if(!self.press){
+					clearInterval(self.down);
+					if(self.next()){
+						self.NextBlock();
+					}else{
+						for(var i=0; i<self.Ny.length; i++)
+							self.Ny[i]++;
+					}
+					self.score++;
+					if(self.E)
+						self.end();
+					self.arrow= setInterval(function (){
+						if(self.press){
+							if(self.next()){
+								self.NextBlock()
+							}else{
+								for(var i=0; i<self.Ny.length; i++)
+									self.Ny[i]++;
+							}
+							self.score++;
+							if(self.E)
+								self.end();
+						}
+					}, 100);
+					self.press= true;
 				}
-				if(self.E)
-					self.end();
-				self.down= setInterval(function(){self.update()}, 1000);
 				break;
+		}
+	}
+	this.handleKeyUp= function (e){
+		if(e.keyCode == 40 && self.press){
+			clearInterval(self.down);
+			self.down= setInterval(function(){self.update()}, 1000);
+			self.press= false;
+			clearInterval(self.arrow);
 		}
 	}
 }
 Tetris.prototype.init= function (){
+	var P= new Path2D();
+	P.rect(170, 365, 160, 57);
+	P.closePath();
+
+	this.ctx.save();
+	this.ctx.lineWidth= 2;
+	this.ctx.stroke(P);
+	this.ctx.strokeRect(1, 1, 498, 818);
+	this.ctx.font = '48px sans-serif';
+	this.ctx.textAlign = "center"; 
+	this.ctx.fillText('START', 250, 410);
+	this.ctx.restore();
+
+	var self= this;
+	this.canvas.onmousemove= function (e){
+		this.style.cursor= "unset";
+		var rect= this.getBoundingClientRect();
+		var x = e.clientX - rect.left;
+		var y = e.clientY - rect.top;
+		if(self.ctx.isPointInPath(P, x, y))
+			this.style.cursor= "pointer";
+	}
+	this.canvas.onclick= function (e){
+		var rect= this.getBoundingClientRect();
+		var x = e.clientX - rect.left;
+		var y = e.clientY - rect.top;
+		if(self.ctx.isPointInPath(P, x, y)){
+			self.play();
+		}
+	}
+};
+Tetris.prototype.play = function (){
 	this.arr= [];
 	for(var i=0; i<20; i++)
 		this.arr.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
@@ -210,6 +269,7 @@ Tetris.prototype.init= function (){
 	this.Ny= this.getPos(false, this.ShapeList[this.cnt]);
 
 	window.addEventListener("keydown", this.handleKeyDown);
+	window.addEventListener("keyup", this.handleKeyUp);
 	var self= this;
 	this.down= setInterval(function(){self.update()}, 1000);
 	this.display();
@@ -524,6 +584,8 @@ Tetris.prototype.NextBlock= function() {
 		scorecnt++;
 	this.score+= scorecnt*1000;
 	this.cnt++;
+	if(this.ShapeList.length-7<=this.cnt)
+		this.sort();
 	this.T= 0;
 	this.Nx= this.getPos(true, this.ShapeList[this.cnt]);
 	this.Ny= this.getPos(false, this.ShapeList[this.cnt]);
@@ -532,7 +594,8 @@ Tetris.prototype.NextBlock= function() {
 			this.E= true;
 };
 Tetris.prototype.end= function() {
-	console.log('end');
 	clearInterval(this.down);
+	clearInterval(this.arrow);
 	window.removeEventListener("keydown", this.handleKeyDown);
+	window.removeEventListener("keydown", this.handleKeyUp);
 };

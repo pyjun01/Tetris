@@ -17,30 +17,8 @@
 	스페이스바= 바로 내려가기
 	<script>
 		window.onload= function (){
-			var C= document.getElementById("canvas");
-			var ctx= C.getContext('2d');
-			ctx.rect(1, 1, 499, 819);
-			ctx.stroke();
-			ctx.save();
-			ctx.font = '48px sans-serif';
-			ctx.textAlign = "center"; 
-  			ctx.fillText('START', 250, 410);
-			ctx.restore();
-			
-			var P= new Path2D();
-			P.rect(170, 365, 160, 57);
-			P.closePath();
-			ctx.stroke(P);
-			C.onclick= function (e){
-				var rect= this.getBoundingClientRect();
-				var x = e.clientX - rect.left;
-				var y = e.clientY - rect.top;
-				if(ctx.isPointInPath(P, x, y)){
-					console.log('a');
-					var tetris= new Tetris();
-					tetris.init();
-				}
-			}
+			var tetris= new Tetris();
+			tetris.init();
 		}
 	</script>
 </body>

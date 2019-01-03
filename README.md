@@ -1,3 +1,3 @@
-# Tetris DEMO: https://pyjun01.github.io/Tetris/
-
-using JS
+# Tetris 
+using JS // 
+DEMO: https://pyjun01.github.io/Tetris/

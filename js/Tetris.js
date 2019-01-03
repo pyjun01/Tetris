@@ -223,40 +223,52 @@ function Tetris(){
 	}
 }
 Tetris.prototype.init= function (){
-	var P= new Path2D();
-	P.rect(170, 365, 160, 57);
-	P.closePath();
+	this.P= new Path2D();
+	var Bw= 25;
+	var w= 150;
+	var h= 50;
+	var l= (this.W-w)/2;
+	var t= (this.H-h)/2;
+	this.P.moveTo(l+Bw, t);
+	this.P.bezierCurveTo(l, t, l, t+h, l+Bw, t+h);
+	this.P.lineTo(l+w-Bw, t+h)
+	this.P.bezierCurveTo(l+w, t+h, l+w, t, l+w-Bw, t);
+	this.P.closePath();
+	this.G= this.ctx.createLinearGradient(0, 0, this.W, 0);
+	this.G.addColorStop(0, "#12c2e9");
+	this.G.addColorStop(0.5, "#c471ed");
+	this.G.addColorStop(1, "#f64f59");
 
-	this.ctx.save();
+	this.ctx.fillStyle= this.G;
+	this.ctx.strokeStyle= this.G;
 	this.ctx.lineWidth= 2;
-	this.ctx.stroke(P);
 	this.ctx.strokeRect(1, 1, 498, 818);
-	this.ctx.font = '48px sans-serif';
-	this.ctx.textAlign = "center"; 
-	this.ctx.fillText('START', 250, 410);
-	this.ctx.restore();
-
+	this.btn("START", this.G);
 	var self= this;
 	this.canvas.onmousemove= function (e){
 		this.style.cursor= "unset";
 		var rect= this.getBoundingClientRect();
 		var x = e.clientX - rect.left;
 		var y = e.clientY - rect.top;
-		if(self.ctx.isPointInPath(P, x, y))
+		if(self.ctx.isPointInPath(self.P, x, y))
 			this.style.cursor= "pointer";
 	}
 	this.canvas.onclick= function (e){
 		var rect= this.getBoundingClientRect();
 		var x = e.clientX - rect.left;
 		var y = e.clientY - rect.top;
-		if(self.ctx.isPointInPath(P, x, y)){
+		if(self.ctx.isPointInPath(self.P, x, y)){
 			self.play();
 		}
 	}
 };
 Tetris.prototype.play = function (){
+	clearInterval(this.down);
+	this.canvas.onmousemove= function (){}
+	this.canvas.onclick= function (){}
+	this.canvas.style.cursor= "unset";
 	this.arr= [];
-	for(var i=0; i<20; i++)
+	for(var i=0; i<21; i++)
 		this.arr.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 	this.ShapeList= [];
 	for(var i=0; i<500; i++)
@@ -267,7 +279,6 @@ Tetris.prototype.play = function (){
 	this.score= 0;
 	this.Nx= this.getPos(true, this.ShapeList[this.cnt]);
 	this.Ny= this.getPos(false, this.ShapeList[this.cnt]);
-
 	window.addEventListener("keydown", this.handleKeyDown);
 	window.addEventListener("keyup", this.handleKeyUp);
 	var self= this;
@@ -277,19 +288,19 @@ Tetris.prototype.play = function (){
 Tetris.prototype.getPos= function(xy, tg) {
 	switch(tg){
 		case "I":
-			return xy? [3, 4, 5, 6]: [-1, -1, -1, -1];
+			return xy? [3, 4, 5, 6]: [0, 0, 0, 0];
 		case "O":
-			return xy? [3, 4, 3, 4]: [-1, -1, 0, 0];
+			return xy? [3, 4, 3, 4]: [0, 0, 1, 1];
 		case "T":
-			return xy? [4, 3, 4, 5]: [0, 0, -1, 0];
+			return xy? [4, 3, 4, 5]: [1, 1, 0, 1];
 		case "L":
-			return xy? [4, 3, 3, 5]: [0, -1, 0, 0];
+			return xy? [4, 3, 3, 5]: [1, 0, 1, 1];
 		case "J":
-			return xy? [4, 5, 3, 5]: [0, -1, 0, 0];
+			return xy? [4, 5, 3, 5]: [1, 0, 1, 1];
 		case "S":
-			return xy? [4, 4, 5, 3]: [-1, 0, -1, 0];
+			return xy? [4, 4, 5, 3]: [0, 1, 0, 1];
 		case "Z":
-			return xy? [4, 3, 4, 5]: [-1, -1, 0, 0];
+			return xy? [4, 3, 4, 5]: [0, 0, 1, 1];
 	}
 };
 Tetris.prototype.update= function (){
@@ -303,42 +314,55 @@ Tetris.prototype.update= function (){
 		this.end();
 };
 Tetris.prototype.display= function (){
+	var self= this;
+
 	this.ctx.clearRect(0, 0, this.W, this.H);
-	this.ctx.beginPath();
-	for(var j=0; j<= 20; j++){
-		this.ctx.moveTo(0, j*this.Bh+20);
-		this.ctx.lineTo(400, j*this.Bh+20);
-		this.ctx.stroke();
+
+	function board (End){
+		self.ctx.beginPath();
+		for(var j=0; j<= 20; j++){
+			self.ctx.moveTo(0, j*self.Bh+20);
+			self.ctx.lineTo(400, j*self.Bh+20);
+			self.ctx.stroke();
+		}
+		for(var i=0; i<= 10; i++){
+			self.ctx.moveTo(i*self.Bw, 0);
+			self.ctx.lineTo(i*self.Bw, self.H);
+			self.ctx.stroke();
+		}
+		self.ctx.closePath();
 	}
-	for(var i=0; i<= 10; i++){
-		this.ctx.moveTo(i*this.Bw, 0);
-		this.ctx.lineTo(i*this.Bw, this.H);
-		this.ctx.stroke();
+	function preview (End){
+		self.ctx.beginPath();
+		self.ctx.moveTo(420, 70);
+		self.ctx.lineTo(420, 280);
+		self.ctx.lineTo(490, 280);
+		self.ctx.lineTo(490, 70);
+		self.ctx.lineTo(420, 70);
+		self.ctx.moveTo(420, 140);
+		self.ctx.lineTo(490, 140);
+		self.ctx.moveTo(420, 210);
+		self.ctx.lineTo(490, 210);
+		self.ctx.stroke();
+		self.ctx.closePath();
+		self.ctx.font= "100 23px Arial";
+		self.ctx.fillText("NEXT", 425, 50);
+		for(var i= 1; i<4; i++)
+			self.preview(self.ShapeList[self.cnt+i], i-1);
 	}
-	this.ctx.moveTo(420, 70);
-	this.ctx.lineTo(420, 280);
-	this.ctx.lineTo(490, 280);
-	this.ctx.lineTo(490, 70);
-	this.ctx.lineTo(420, 70);
-	this.ctx.moveTo(420, 140);
-	this.ctx.lineTo(490, 140);
-	this.ctx.moveTo(420, 210);
-	this.ctx.lineTo(490, 210);
-	this.ctx.stroke();
-	this.ctx.closePath();
-	this.ctx.font= "100 23px Arial";
-	this.ctx.fillText("NEXT", 425, 50);
-	for(var i= 1; i<4; i++){
-		this.preview(this.ShapeList[this.cnt+i], i-1);
+	function score (End){
+		self.ctx.font= "100 20px Arial";
+		self.ctx.fillText("SCORE", 420, 330);
+		self.ctx.save();
+		self.ctx.textAlign = "center"; 
+		self.ctx.fillText(self.score, 455, 360);
+		self.ctx.restore();
 	}
-	this.ctx.font= "100 20px Arial";
-	this.ctx.fillText("SCORE", 420, 330);
-	this.ctx.save();
-	this.ctx.textAlign = "center"; 
-	this.ctx.fillText(this.score, 455, 360);
-	this.ctx.restore();
+	board();
+	preview();
+	score();
 	var c="";
-	for(var i=0; i< 20; i++){
+	for(var i=0; i< 21; i++){
 		for(var j=0; j< 10; j++){
 			if(this.arr[i][j] != 0){
 				switch(this.arr[i][j]){
@@ -391,12 +415,11 @@ Tetris.prototype.display= function (){
 			c= "#f03e3e";
 			break;
 	}
-	var self= this;
 	var Px= this.Nx.slice();
 	var Py= this.Ny.slice();
 	function Pnext(){
 		var maxY= Math.max.apply(null, Py);
-		if(maxY+1 >= 20)
+		if(maxY+1 >= self.arr.length)
 			return true;
 		for(var i=0; i<4; i++)
 			if(self.arr[Py[i]+1] != undefined && self.arr[Py[i]+1][Px[i]] != 0)
@@ -405,14 +428,22 @@ Tetris.prototype.display= function (){
 	}
 	function Pdown(){
 		if(Pnext()){
+			self.ctx.save();
+			self.ctx.fillStyle= "#fff";
+			self.ctx.lineWidth= 3;
+			self.ctx.strokeStyle= c;
 			for(var i=0; i<4; i++){
-				self.ctx.save();
-				self.ctx.fillStyle= "#fff";
-				self.ctx.lineWidth= 3;
-				self.ctx.strokeStyle= c;
-				self.ctx.strokeRect(Px[i]*self.Bw+1.5, Py[i]*self.Bh+20+1.5, self.Bw-3, self.Bh-3);
-				self.ctx.restore();
+				var isDouble= false;
+				for(var j=0; j<4; j++){
+					if( Px[i] == self.Nx[j] && Py[i] == self.Ny[j]){
+						isDouble= true;
+						break;
+					}
+				}
+				if(!isDouble)
+					self.ctx.strokeRect(Px[i]*self.Bw+1.5, Py[i]*self.Bh-20+1.5, self.Bw-3, self.Bh-3);
 			}
+			self.ctx.restore();
 			return;
 		}else{
 			for(var i=0; i<Py.length; i++){
@@ -421,28 +452,62 @@ Tetris.prototype.display= function (){
 		}
 		Pdown();
 	}
-	Pdown();
-	for(var i=0; i<4; i++){
-		this.block(this.Nx[i], this.Ny[i], c);
-	}
 	if(!this.E){
+		Pdown();
+		for(var i=0; i<4; i++){
+			this.block(this.Nx[i], this.Ny[i], c);
+		}
 		var self= this;
 		requestAnimationFrame(function(){self.display();});
+	}else{
+		self.ctx.strokeStyle= "#000";
+		self.ctx.fillStyle= "#000";
+		board();
+		preview();
+		score();
+		self.ctx.beginPath();
+		for(var i=0; i< 21; i++){
+			for(var j=0; j< 10; j++){
+				if(self.arr[i][j] != 0){
+					c= "#666";
+					self.block(j, i, c);
+				}
+			}
+		}
+		this.ctx.fillStyle= 'rgba(0, 0, 0, 0.5)';
+		this.ctx.fillRect(0, 0, this.W, this.H);
+		this.btn("RE", "#000");
+		this.canvas.onmousemove= function (e){
+			this.style.cursor= "unset";
+			var rect= this.getBoundingClientRect();
+			var x = e.clientX - rect.left;
+			var y = e.clientY - rect.top;
+			if(self.ctx.isPointInPath(self.P, x, y))
+				this.style.cursor= "pointer";
+		}
+		this.canvas.onclick= function (e){
+			var rect= this.getBoundingClientRect();
+			var x = e.clientX - rect.left;
+			var y = e.clientY - rect.top;
+			if(self.ctx.isPointInPath(self.P, x, y)){
+				self.ctx.fillStyle= self.G;
+				self.ctx.strokeStyle= self.G;
+				self.play();
+			}
+		}	
 	}
 };
 Tetris.prototype.block= function(x, y, n) {
 	this.ctx.save();
 	this.ctx.fillStyle= n;
 	this.ctx.lineWidth= 3;
-	this.ctx.strokeStyle= "#000";
-	this.ctx.fillRect(x*this.Bw+3, y*this.Bh+20+3, this.Bw-6, this.Bh-6);
-	this.ctx.strokeRect(x*this.Bw+1.5, y*this.Bh+20+1.5, this.Bw-3, this.Bh-3);
+	var b= 1;
+	this.ctx.fillRect(x*this.Bw+b, y*this.Bh-20+b, this.Bw-b*2, this.Bh-b*2);
 	this.ctx.restore();
 };
 Tetris.prototype.preview= function(Shape, num) {
 	this.ctx.save();
 	this.ctx.lineWidth= 3;
-	this.ctx.strokeStyle= "#000";
 	var x= this.getPos(true, Shape);
 	for(var i=0; i<x.length; i++)
 		x[i]-=3;
@@ -455,84 +520,60 @@ Tetris.prototype.preview= function(Shape, num) {
 	switch(Shape){
 		case "I":
 			c= "#364fc7";
-			this.ctx.fillStyle= c;
-			for(var i=0; i<4; i++){
+			this.ctx.fillStyle= this.E? "#666": c;
+			for(var i=0; i<4; i++)
 				this.ctx.fillRect(defaultX+defaultBlock*i, defaultY, defaultBlock, defaultBlock);
-				this.ctx.strokeRect(defaultX+defaultBlock*i, defaultY, defaultBlock, defaultBlock);
-			}
 			break;
 		case "O":
 			c= "#fcc419";
-			this.ctx.fillStyle= c;
+			this.ctx.fillStyle= this.E? "#666": c;
 			for(var i=1; i<5; i++){
 				if(i<3){
 					this.ctx.fillRect(defaultX+defaultBlock*i, defaultY, defaultBlock, defaultBlock);
-					this.ctx.strokeRect(defaultX+defaultBlock*i, defaultY, defaultBlock, defaultBlock);
 				}else{
 					this.ctx.fillRect(defaultX+defaultBlock*(i-2), defaultY+defaultBlock, defaultBlock, defaultBlock);
-					this.ctx.strokeRect(defaultX+defaultBlock*(i-2), defaultY+defaultBlock, defaultBlock, defaultBlock);
 				}
 			}
 			break;
 		case "T":
 			c= "#845ef7";
-			this.ctx.fillStyle= c;
+			this.ctx.fillStyle= this.E? "#666": c;
 			this.ctx.fillRect(8+defaultX+defaultBlock, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX, 15+defaultY, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock, 15+defaultY, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock*2, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock*2, 15+defaultY, defaultBlock, defaultBlock);
 			break;
 		case "L":
 			c= "#e8590c";
-			this.ctx.fillStyle= c;
+			this.ctx.fillStyle= this.E? "#666": c;
 			this.ctx.fillRect(8+defaultX, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX, 15+defaultY, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock, 15+defaultY, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock*2, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock*2, 15+defaultY, defaultBlock, defaultBlock);
 			break;
 		case "J":
 			c= "#74c0fc";
-			this.ctx.fillStyle= c;
+			this.ctx.fillStyle= this.E? "#666": c;
 			this.ctx.fillRect(8+defaultX+defaultBlock*2, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock*2, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX, 15+defaultY, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock, 15+defaultY, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock*2, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock*2, 15+defaultY, defaultBlock, defaultBlock);
 			break;
 		case "S":
 			c= "#8ce99a";
-			this.ctx.fillStyle= c;
+			this.ctx.fillStyle= this.E? "#666": c;
 			this.ctx.fillRect(8+defaultX+defaultBlock, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock*2, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock*2, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX, 15+defaultY, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock, 15+defaultY, defaultBlock, defaultBlock);
 			break;
 		case "Z":
 			c= "#f03e3e";
-			this.ctx.fillStyle= c;
+			this.ctx.fillStyle= this.E? "#666": c;
 			this.ctx.fillRect(8+defaultX, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock, 15+defaultY-defaultBlock, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock, 15+defaultY, defaultBlock, defaultBlock);
 			this.ctx.fillRect(8+defaultX+defaultBlock*2, 15+defaultY, defaultBlock, defaultBlock);
-			this.ctx.strokeRect(8+defaultX+defaultBlock*2, 15+defaultY, defaultBlock, defaultBlock);
 			break;
 	}
 	this.ctx.restore();
@@ -555,7 +596,7 @@ Tetris.prototype.sort= function() {
 };
 Tetris.prototype.next= function() {
 	var maxY= Math.max.apply(null, this.Ny);
-	if(maxY+1 >= 20)
+	if(maxY+1 >= this.arr.length)
 		return true;
 	for(var i=0; i<4; i++)
 		if(this.arr[this.Ny[i]+1] != undefined && this.arr[this.Ny[i]+1][this.Nx[i]] != 0)
@@ -569,7 +610,7 @@ Tetris.prototype.NextBlock= function() {
 		}
 	}
 	var scorecnt= 0;
-	for (var i= 0; i < 20; i++) {
+	for (var i= 0; i < this.arr.length; i++) {
 		var isFull= true;
 		for(var j=0; j< 10; j++)
 			if(this.arr[i][j] == 0)
@@ -598,4 +639,20 @@ Tetris.prototype.end= function() {
 	clearInterval(this.arrow);
 	window.removeEventListener("keydown", this.handleKeyDown);
 	window.removeEventListener("keydown", this.handleKeyUp);
+	var self= this;
 };
+Tetris.prototype.btn= function (text, fill){
+	var w= 150;
+	var h= 50;
+	var l= (this.W-w)/2;
+	var t= (this.H-h)/2;
+	this.ctx.save();
+	this.ctx.lineWidth= 2;
+	this.ctx.fillStyle = fill;
+	this.ctx.fill(this.P);
+	this.ctx.font = '30px sans-serif';
+	this.ctx.textAlign = "center"; 
+	this.ctx.fillStyle = 'white';
+	this.ctx.fillText(text, l+w/2, t+36);
+	this.ctx.restore();
+}
